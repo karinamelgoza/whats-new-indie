@@ -4,6 +4,7 @@ from igdb.wrapper import IGDBWrapper
 
 import json
 import config
+import requests
 
 app = Flask(__name__)
 
@@ -14,28 +15,17 @@ wrapper = IGDBWrapper(config.client_id,
 @app.route('/')
 def homepage():
 
+    response = requests.get(
+        f"https://api.rawg.io/api/games?dates=2021-08-01,2021-08-31&key={config.key}&platforms=18,1,7,187,186,3,21&genres=51&page_size=50&page=1&ordering=released")
+
+    results_rawg = response.json()
+
     byte_array = wrapper.api_request(
-        'games', 'fields name, cover.url, videos.video_id; where release_dates.date > 1627776000 & release_dates.date < 1630454400 & genres = (32) & platforms= (130); limit 10;')
+        'games', 'fields name, cover.url, videos.video_id, release_dates.human; where first_release_date < 1627776000 &release_dates.date > 1627776000 & release_dates.date < 1630454400 & genres = (32) & platforms= (130); limit 60;')
 
     results = json.loads(byte_array)
-    # for i in results:
-    #     if i.get('videos'):
-    #         video_list = i.get('videos')
-    #         video_id = video_list[0].get('video_id')
-    #         video_url = f"https://www.youtube.com/watch?v={video_id}"
 
-    return render_template('homepage.html', results=results)
-
-
-# @app.route('/show_games')
-# def get_games():
-#     byte_array = wrapper.api_request(
-#         'games', 'fields name; where release_dates.date > 1627776000 & release_dates.date < 1630454400 & genres = (32) & platforms= (130); limit 10;')
-
-#     results = json.loads(byte_array)
-
-#     print(results)
-    # return byte_array
+    return render_template('homepage.html', results=results, results_rawg=results_rawg['results'],)
 
 
 if __name__ == '__main__':
