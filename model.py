@@ -17,6 +17,37 @@ class User(db.Model):
         return f'user_id={self.user_id} username={self.username}'
 
 
+class Game(db.Model):
+
+    __tablename__ = 'video_games'
+
+    video_game_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    url = db.Column(db.String(255), nullable=True)
+
+    def __repr__(self):
+        return f'video_game_id={self.video_game_id} name={self.name}'
+
+
+class Wishlist(db.Model):
+
+    __tablename__ = 'wishlist'
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    video_game_id = db.Column(db.Integer, nullable=False)
+
+
+class Library(db.Model):
+
+    __tablename__ = 'library'
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    video_game_id = db.Column(db.Integer, nullable=False)
+    played = db.Column(db.Boolean, nullable=True)
+
+
 # def connect_db(app):
 #     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://owcwrsvbjlrnri:6dfd1b7bbb6ca7a12448a27b00c9bbd1f6027a635773b9a89acbb6412c5b85a4@ec2-35-153-114-74.compute-1.amazonaws.com:5432/dfnb0bbojq31d0'
 #     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

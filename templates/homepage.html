@@ -54,9 +54,11 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 <input type="image" class="btn btn-sm btn-outline-secondary"
-                                    src='/static/images/heart.svg' alt="heart" />
+                                    src='/static/images/heart.svg' alt="heart"
+                                    onclick="location.href='/wishlist/{{ i.id }}'" />
                                 <input type="image" class="btn btn-sm btn-outline-secondary"
-                                    src='/static/images/plus.svg' alt="plus" />
+                                    src='/static/images/plus.svg' alt="plus"
+                                    onclick="location.href='/library/{{ i.id }}'" />
                             </div>
                             <small class="text-muted">{{i.released}}</small>
                         </div>

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 
-from model import db, User
+from model import db, User, Game, Wishlist, Library
 
 from igdb.wrapper import IGDBWrapper
 
@@ -45,7 +45,7 @@ def register():
                 flash('User does not exist')
                 return redirect('/')
             elif password == user.password:
-                session['logged_in'] = user.username
+                session['logged_in'] = user.user_id
                 flash('Logged in!')
                 return redirect('/')
             else:
@@ -69,6 +69,60 @@ def register():
 def logout():
     session.pop('logged_in')
     flash('Logged out')
+    return redirect('/')
+
+
+@app.route('/wishlist/<int:id>')
+def add_wishlist_item(id):
+
+    response = requests.get(
+        f"https://api.rawg.io/api/games/{id}?key={config.key}")
+    results = response.json()
+    name = results.get('name')
+
+    video_game = Game.query.filter_by(name=f'{name}').first()
+
+    if not video_game:
+
+        video_game = Game(name=name,
+                          url=f'https://rawg.io/games/{id}')
+
+        db.session.add(video_game)
+        db.session.commit()
+
+    wishlist_item = Wishlist(user_id=session.get(
+        'logged_in'), video_game_id=video_game.video_game_id)
+
+    db.session.add(wishlist_item)
+    db.session.commit()
+
+    return redirect('/')
+
+
+@app.route('/library/<int:id>')
+def add_library_item(id):
+
+    response = requests.get(
+        f"https://api.rawg.io/api/games/{id}?key={config.key}")
+    results = response.json()
+    name = results.get('name')
+
+    video_game = Game.query.filter_by(name=f'{name}').first()
+
+    if not video_game:
+
+        video_game = Game(name=name,
+                          url=f'https://rawg.io/games/{id}')
+
+        db.session.add(video_game)
+        db.session.commit()
+
+    library_item = Library(user_id=session.get(
+        'logged_in'), video_game_id=video_game.video_game_id, played=False)
+
+    db.session.add(library_item)
+    db.session.commit()
+
     return redirect('/')
 
 
