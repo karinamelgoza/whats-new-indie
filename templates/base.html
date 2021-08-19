@@ -18,20 +18,102 @@
                 <a href="/" class="text-white text-decoration-none">
                     <span class="fs-4">What's New Indie</span>
                 </a>
-
                 <ul class="nav col-12 col-lg-auto mb-2 justify-content-center mb-md-0">
+                    {% if session.get('logged_in')%}
                     <li><a href="#" class="nav-link px-2 text-white">Wishlist</a></li>
                     <li><a href="#" class="nav-link px-2 text-white">Library</a></li>
+                    {% endif %}
                 </ul>
 
                 <div class="text-end">
-                    <button type="button" class="btn btn-outline-light me-2">Login</button>
-                    <button type="button" class="btn btn-warning">Sign-up</button>
+                    {% if session.get('logged_in') %}
+                    <button type="button" class="btn btn-outline-light me-2"
+                        onclick="location.href='/logout'">Logout</button>
+                    {% else %}
+                    <button type="button" class="btn btn-outline-light me-2" data-bs-toggle="modal"
+                        data-bs-target="#modalLogin">Login</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modalSignup">Sign Up</button>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </header>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalSignup">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-5 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h2 class="fw-bold mb-0">Sign up</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-5 pt-0">
+                    <form class="" method="POST" name="register">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" id="floatingInput" placeholder="username"
+                                name="first_name">
+                            <label for="floatingInput">First Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" id="floatingInput" placeholder="username"
+                                name="last_name">
+                            <label for="floatingInput">Last Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" id="floatingInput" placeholder="username"
+                                required name="register_username">
+                            <label for="floatingInput">Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control rounded-4" id="floatingPassword"
+                                placeholder="Password" required name="password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Sign up</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalLogin">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-5 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h2 class="fw-bold mb-0">Login</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-5 pt-0">
+                    <form method="POST">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingInput" placeholder="Username"
+                                name="login_username">
+                            <label for="floatingInput">Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                                name="password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
+
+                        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign
+                            in</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <main>
+
+        {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+        <div class="alert alert-primary alert-dismissible">{{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endwith %}
+
         {% block content %}
         {% endblock %}
     </main>
