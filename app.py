@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, session, redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.pool import NullPool
 
 from model import db, User, Game, Wishlist, Library
 
@@ -9,13 +10,16 @@ import json
 import config
 import requests
 
+db = SQLAlchemy()
 app = Flask(__name__)
 
 app.secret_key = "secret-key"
 
-db = SQLAlchemy(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{config.psql_username}:{config.psql_password}@{config.psql_host}/{config.psql_db}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.app = app
+db.init_app(app)
 
 wrapper = IGDBWrapper(config.client_id,
                       config.access_token)
@@ -124,6 +128,38 @@ def add_library_item(id):
     db.session.commit()
 
     return redirect('/')
+
+
+@app.route('/wishlist/show')
+def show_wishlist():
+
+    wishlist = Wishlist.query.filter_by(
+        user_id=session.get('logged_in')).all()
+
+    return render_template('wishlist.html', wishlist=wishlist)
+
+
+@app.route('/library/show')
+def show_library():
+
+    library = Library.query.filter_by(
+        user_id=session.get('logged_in')).all()
+
+    return render_template('library.html', library=library)
+
+
+@app.route('/library/played/<int:video_game_id>')
+def mark_played(video_game_id):
+
+    video_game = Library.query.filter_by(video_game_id=video_game_id).first()
+
+    # print(video_game.played)
+
+    video_game.played = True
+    db.session.merge(video_game)
+    db.session.commit()
+
+    return redirect('/library/show')
 
 
 if __name__ == '__main__':

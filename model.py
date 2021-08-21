@@ -35,7 +35,10 @@ class Wishlist(db.Model):
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    video_game_id = db.Column(db.Integer, nullable=False)
+    video_game_id = db.Column(
+        db.Integer, db.ForeignKey('video_games.video_game_id'))
+
+    game = db.relationship('Game', backref=db.backref('wishlist', order_by=id))
 
 
 class Library(db.Model):
@@ -44,8 +47,11 @@ class Library(db.Model):
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    video_game_id = db.Column(db.Integer, nullable=False)
+    video_game_id = db.Column(
+        db.Integer, db.ForeignKey('video_games.video_game_id'))
     played = db.Column(db.Boolean, nullable=True)
+
+    game = db.relationship('Game', backref=db.backref('library', order_by=id))
 
 
 # def connect_db(app):

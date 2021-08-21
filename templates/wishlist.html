@@ -1,1 +1,20 @@
 {% extends 'base.html' %}
+
+{% block content %}
+
+<div class="list-group py-3">
+    {% for game in wishlist %}
+    <div class="list-group-item  d-flex gap-3 py-3" aria-current="true">
+        <img src="" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+        <div class="d-flex gap-2 w-100 justify-content-between">
+            <div>
+                <h6 class="mb-0">{{ game.game.name }}</h6>
+                <p class="mb-0 opacity-75">Some placeholder content in a paragraph.</p>
+            </div>
+            <small class="opacity-50 text-nowrap">now</small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
