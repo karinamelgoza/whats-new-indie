@@ -52,14 +52,28 @@
                             {% endfor %}
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
+                            {% if session.get('logged_in') %}
                             <div class="btn-group">
+                                {% if i.name in wishlist %}
+                                <input type="image" class="btn btn-sm btn-outline-secondary"
+                                    src='/static/images/heart-fill.svg' alt="heart-fill"
+                                    onclick="location.href='/wishlist/remove/{{ i.name }}'" />
+                                {% else %}
                                 <input type="image" class="btn btn-sm btn-outline-secondary"
                                     src='/static/images/heart.svg' alt="heart"
                                     onclick="location.href='/wishlist/{{ i.id }}'" />
+                                {% endif %}
+                                {% if i.name in library %}
+                                <img type="image" class="btn-sm btn-outline-secondary" src='/static/images/check2.svg'
+                                    alt="check" />
+                                <small class="text-muted">In library</small>
+                                {% else %}
                                 <input type="image" class="btn btn-sm btn-outline-secondary"
                                     src='/static/images/plus.svg' alt="plus"
                                     onclick="location.href='/library/{{ i.id }}'" />
+                                {% endif %}
                             </div>
+                            {% endif %}
                             <small class="text-muted">{{i.released}}</small>
                         </div>
                     </div>

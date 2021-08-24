@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, flash, session, redirect
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.pool import NullPool
-
 from model import db, User, Game, Wishlist, Library
 
 from igdb.wrapper import IGDBWrapper
@@ -66,7 +64,23 @@ def register():
 
     results = json.loads(byte_array)
 
-    return render_template('homepage.html', results=results, results_rawg=results_rawg['results'])
+    wishlist = Wishlist.query.filter_by(
+        user_id=session.get('logged_in')).all()
+
+    wishlist_games = []
+
+    for i in wishlist:
+        wishlist_games.append(i.game.name)
+
+    library = Library.query.filter_by(
+        user_id=session.get('logged_in')).all()
+
+    library_games = []
+
+    for i in library:
+        library_games.append(i.game.name)
+
+    return render_template('homepage.html', results=results, results_rawg=results_rawg['results'], wishlist=wishlist_games, library=library_games)
 
 
 @app.route('/logout')
@@ -148,18 +162,28 @@ def show_library():
     return render_template('library.html', library=library)
 
 
-@app.route('/library/played/<int:video_game_id>')
-def mark_played(video_game_id):
-
-    video_game = Library.query.filter_by(video_game_id=video_game_id).first()
-
-    # print(video_game.played)
+@app.route('/library/played/<int:user_id>,<int:video_game_id>')
+def mark_played(user_id, video_game_id):
+    video_game = Library.query.filter_by(
+        user_id=user_id, video_game_id=video_game_id).first()
 
     video_game.played = True
     db.session.merge(video_game)
     db.session.commit()
 
     return redirect('/library/show')
+
+
+# @app.route('/library/remove/<int:user_id>,<int:video_game_id>')
+# def remove_game_library(user_id, video_game_id):
+
+#     video_game = Library.query.filter_by(
+#         user_id=user_id, video_game_id=video_game_id).first()
+
+#     db.session.delete(video_game)
+#     db.session.commit()
+
+#     return redirect('library/show')
 
 
 if __name__ == '__main__':

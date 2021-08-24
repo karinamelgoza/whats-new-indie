@@ -40,6 +40,9 @@ class Wishlist(db.Model):
 
     game = db.relationship('Game', backref=db.backref('wishlist', order_by=id))
 
+    def __repr__(self):
+        return f'video_game_id={self.video_game_id} name={self.game.name}'
+
 
 class Library(db.Model):
 

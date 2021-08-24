@@ -15,27 +15,18 @@
                         <li class="me-auto">
                             {% if game.played == False %}
                             <input type="image" width="32" height="32" src='/static/images/controller.svg'
-                                alt="controller" onclick="location.href='/library/played/{{ game.video_game_id }}'" />
-                            <!-- <a href="/library/played/{{ game.video_game_id }}" data-bs-toggle="tooltip"
-                                data-bs-placement="right" title="Mark as Played">
-                                <img src="/static/images/controller.svg" alt="" width="32" height="32" class="">
-                            </a> -->
-
+                                alt="controller"
+                                onclick="location.href='/library/played/{{ game.user_id }},{{ game.video_game_id }}'" />
                         </li>
                         <li class="d-flex align-items-center me-3">
-                            <svg class="bi me-2" width="1em" height="1em">
-                                <use xlink:href="#geo-fill" />
-                            </svg>
                             {% else %}
                             <small>Played</small>
                             {% endif %}
                         </li>
-                        <li class="d-flex align-items-center">
-                            <svg class="bi me-2" width="1em" height="1em">
-                                <use xlink:href="#calendar3" />
-                            </svg>
-                            <small>3d</small>
-                        </li>
+                        <!-- <li class="d-flex align-items-center">
+                            <input type="image" width="32" height="32" src='/static/images/trash.svg' alt="controller"
+                                onclick="location.href='/library/remove/{{ game.user_id }},{{ game.video_game_id }}'" />
+                        </li> -->
                     </ul>
                 </div>
             </div>
