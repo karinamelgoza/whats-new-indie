@@ -5,13 +5,21 @@
 <div class="list-group py-3">
     {% for game in wishlist %}
     <div class="list-group-item  d-flex gap-3 py-3" aria-current="true">
-        <img src="" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+        {% if game.game.cover_pic %}
+        <img src="{{ game.game.cover_pic }}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+        {% else %}
+        <img src="/static/images/black_controller.svg" alt="twbs" width="32" height="32" class="rounded-circle">
+        {% endif %}
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
                 <h6 class="mb-0">{{ game.game.name }}</h6>
-                <p class="mb-0 opacity-75">Some placeholder content in a paragraph.</p>
+                <small>
+                    <a href="/wishlist/move/{{ game.id }},{{ game.user_id }},{{ game.video_game_id }}"
+                        class="mb-0 opacity-75 text-decoration-none text-black">Add to Library</a>
+                </small>
             </div>
-            <small class="opacity-50 text-nowrap">now</small>
+            <input type="image" width="20" height="20" src='/static/images/trash.svg' alt="trash"
+                onclick="location.href='/wishlist/remove/{{ game.user_id }},{{ game.video_game_id }}'" />
         </div>
     </div>
     {% endfor %}

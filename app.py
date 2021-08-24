@@ -1,12 +1,19 @@
 from flask import Flask, render_template, request, flash, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 from model import db, User, Game, Wishlist, Library
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from igdb.wrapper import IGDBWrapper
 
 import json
 import config
 import requests
+
+engine = create_engine(
+    f'postgresql://{config.psql_username}:{config.psql_password}@{config.psql_host}/{config.psql_db}')
+
+Session = sessionmaker(engine)
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -60,25 +67,27 @@ def register():
     results_rawg = response.json()
 
     byte_array = wrapper.api_request(
-        'games', 'fields name, cover.url, videos.video_id, release_dates.human; where first_release_date < 1627776000 &release_dates.date > 1627776000 & release_dates.date < 1630454400 & genres = (32) & platforms= (130); limit 60;')
+        'games', 'fields name, cover.url, videos.video_id, release_dates.human, genres.name, platforms.name; where first_release_date < 1627776000 &release_dates.date > 1627776000 & release_dates.date < 1630454400 & genres = (32) & platforms= (130); limit 60;')
 
     results = json.loads(byte_array)
 
-    wishlist = Wishlist.query.filter_by(
-        user_id=session.get('logged_in')).all()
+    with Session() as dbsession:
 
-    wishlist_games = []
+        wishlist = dbsession.query(Wishlist).filter_by(
+            user_id=session.get('logged_in')).all()
 
-    for i in wishlist:
-        wishlist_games.append(i.game.name)
+        wishlist_games = []
 
-    library = Library.query.filter_by(
-        user_id=session.get('logged_in')).all()
+        for i in wishlist:
+            wishlist_games.append(i.game.name)
 
-    library_games = []
+        library = dbsession.query(Library).filter_by(
+            user_id=session.get('logged_in')).all()
 
-    for i in library:
-        library_games.append(i.game.name)
+        library_games = []
+
+        for i in library:
+            library_games.append(i.game.name)
 
     return render_template('homepage.html', results=results, results_rawg=results_rawg['results'], wishlist=wishlist_games, library=library_games)
 
@@ -93,28 +102,31 @@ def logout():
 @app.route('/wishlist/<int:id>')
 def add_wishlist_item(id):
 
-    response = requests.get(
-        f"https://api.rawg.io/api/games/{id}?key={config.key}")
-    results = response.json()
-    name = results.get('name')
+    with Session() as dbsession:
 
-    video_game = Game.query.filter_by(name=f'{name}').first()
+        response = requests.get(
+            f"https://api.rawg.io/api/games/{id}?key={config.key}")
+        results = response.json()
+        name = results.get('name')
+        cover_pic = results.get('background_image')
 
-    if not video_game:
+        video_game = dbsession.query(Game).filter_by(name=f'{name}').first()
 
-        video_game = Game(name=name,
-                          url=f'https://rawg.io/games/{id}')
+        if not video_game:
 
-        db.session.add(video_game)
-        db.session.commit()
+            video_game = Game(name=name,
+                              url=f'https://rawg.io/games/{id}', cover_pic=cover_pic)
 
-    wishlist_item = Wishlist(user_id=session.get(
-        'logged_in'), video_game_id=video_game.video_game_id)
+            dbsession.add(video_game)
+            dbsession.commit()
 
-    db.session.add(wishlist_item)
-    db.session.commit()
+        wishlist_item = Wishlist(user_id=session.get(
+            'logged_in'), video_game_id=video_game.video_game_id)
 
-    return redirect('/')
+        dbsession.add(wishlist_item)
+        dbsession.commit()
+
+        return redirect('/')
 
 
 @app.route('/library/<int:id>')
@@ -124,13 +136,14 @@ def add_library_item(id):
         f"https://api.rawg.io/api/games/{id}?key={config.key}")
     results = response.json()
     name = results.get('name')
+    cover_pic = results.get('background_image')
 
     video_game = Game.query.filter_by(name=f'{name}').first()
 
     if not video_game:
 
         video_game = Game(name=name,
-                          url=f'https://rawg.io/games/{id}')
+                          url=f'https://rawg.io/games/{id}', cover_pic=cover_pic)
 
         db.session.add(video_game)
         db.session.commit()
@@ -144,22 +157,35 @@ def add_library_item(id):
     return redirect('/')
 
 
+@app.route('/wishlist/port/<int:id>')
+def add_port_wishlist(id):
+
+    byte_array = wrapper.api_request(
+        'games', f'fields name; where id={id}')
+
+    results = json.loads(byte_array)
+
+
 @app.route('/wishlist/show')
 def show_wishlist():
 
-    wishlist = Wishlist.query.filter_by(
-        user_id=session.get('logged_in')).all()
+    with Session() as dbsession:
 
-    return render_template('wishlist.html', wishlist=wishlist)
+        wishlist = dbsession.query(Wishlist).filter_by(
+            user_id=session.get('logged_in')).all()
+
+        return render_template('wishlist.html', wishlist=wishlist)
 
 
 @app.route('/library/show')
 def show_library():
 
-    library = Library.query.filter_by(
-        user_id=session.get('logged_in')).all()
+    with Session() as dbsession:
 
-    return render_template('library.html', library=library)
+        library = dbsession.query(Library).filter_by(
+            user_id=session.get('logged_in')).all()
+
+        return render_template('library.html', library=library)
 
 
 @app.route('/library/played/<int:user_id>,<int:video_game_id>')
@@ -174,16 +200,48 @@ def mark_played(user_id, video_game_id):
     return redirect('/library/show')
 
 
-# @app.route('/library/remove/<int:user_id>,<int:video_game_id>')
-# def remove_game_library(user_id, video_game_id):
+@app.route('/library/remove/<int:user_id>,<int:video_game_id>')
+def remove_game_library(user_id, video_game_id):
 
-#     video_game = Library.query.filter_by(
-#         user_id=user_id, video_game_id=video_game_id).first()
+    with Session() as session:
 
-#     db.session.delete(video_game)
-#     db.session.commit()
+        video_game = session.query(Library).filter_by(
+            user_id=user_id, video_game_id=video_game_id).first()
 
-#     return redirect('library/show')
+        session.delete(video_game)
+        session.commit()
+
+        return redirect('/library/show')
+
+
+@app.route('/wishlist/remove/<int:user_id>,<int:video_game_id>')
+def remove_game_wishlist(user_id, video_game_id):
+
+    with Session() as session:
+
+        video_game = session.query(Wishlist).filter_by(
+            user_id=user_id, video_game_id=video_game_id).first()
+
+        session.delete(video_game)
+        session.commit()
+
+        return redirect('/wishlist/show')
+
+
+@app.route('/wishlist/move/<int:id>,<int:user_id>,<int:video_game_id>')
+def move_game_library(id, user_id, video_game_id):
+
+    with Session() as session:
+
+        video_game = session.query(Wishlist).filter_by(id=id).first()
+        session.delete(video_game)
+
+        move_game = Library(
+            user_id=user_id, video_game_id=video_game_id, played=False)
+        session.add(move_game)
+        session.commit()
+
+    return redirect('/wishlist/show')
 
 
 if __name__ == '__main__':

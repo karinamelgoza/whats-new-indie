@@ -24,6 +24,7 @@ class Game(db.Model):
     video_game_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     url = db.Column(db.String(255), nullable=True)
+    cover_pic = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
         return f'video_game_id={self.video_game_id} name={self.name}'
