@@ -9,9 +9,9 @@
         <div class="col">
             <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg "
                 style="background-image: url('{{game.game.cover_pic}}'); background-size: cover; border-radius: 20px;">
-                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1"
+                <div class="d-flex flex-column h-100 p-4 pb-2 text-white text-shadow-1"
                     style="text-shadow: 0px 0px 8px black;">
-                    <h2 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">{{ game.game.name }}</h2>
+                    <h2 class="pt-2 mt-2 mb-5 display-6 lh-1 fw-bold">{{ game.game.name }}</h2>
                     <ul class="d-flex list-unstyled mt-auto">
                         <li class="me-auto">
                             {% if game.played == False %}
@@ -21,10 +21,11 @@
                         </li>
                         <li class="d-flex align-items-center me-3">
                             {% else %}
-                            <small>Played</small>
+                            <a href="/library/played/remove/{{ game.user_id }},{{ game.video_game_id }}"
+                                class="mb-0 text-decoration-none text-white">Played</a>
                             {% endif %}
                         </li>
-                        <li class="d-flex align-items-center">
+                        <li class=" d-flex align-items-center">
                             <input type="image" width="28" height="28" src='/static/images/trash_white.svg' alt="trash"
                                 onclick="location.href='/library/remove/{{ game.user_id }},{{ game.video_game_id }}'" />
                         </li>

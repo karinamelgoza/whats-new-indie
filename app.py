@@ -253,6 +253,19 @@ def mark_played(user_id, video_game_id):
     return redirect('/library/show')
 
 
+@app.route('/library/played/remove/<int:user_id>,<int:video_game_id>')
+def remove_played(user_id, video_game_id):
+
+    with Session() as session:
+        video_game = session.query(Library).filter_by(
+            user_id=user_id, video_game_id=video_game_id).first()
+
+        video_game.played = False
+        session.commit()
+
+    return redirect('/library/show')
+
+
 @app.route('/library/remove/<int:user_id>,<int:video_game_id>')
 def remove_game_library(user_id, video_game_id):
 

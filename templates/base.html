@@ -14,14 +14,14 @@
 <body>
     <header class="p-3 bg-dark text-white">
         <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between py-1">
+            <div class="d-flex flex-wrap align-items-center justify-content-lg-between py-1">
                 <a href="/" class="text-white text-decoration-none">
                     <span class="fs-4">What's New Indie</span>
                 </a>
-                <ul class="nav col-12 col-lg-auto mb-2 justify-content-center mb-md-0">
+                <ul class="nav col-lg-auto justify-content-center mb-md-0">
                     {% if session.get('logged_in')%}
-                    <li><a href="/wishlist/show" class="nav-link px-2 text-white">Wishlist</a></li>
-                    <li><a href="/library/show" class="nav-link px-2 text-white">Library</a></li>
+                    <li><a href="/wishlist/show" class="nav-link px-3 text-white">Wishlist</a></li>
+                    <li><a href="/library/show" class="nav-link px-3 text-white">Library</a></li>
                     {% endif %}
                 </ul>
 
