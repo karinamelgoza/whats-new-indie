@@ -161,9 +161,62 @@ def add_library_item(id):
 def add_port_wishlist(id):
 
     byte_array = wrapper.api_request(
-        'games', f'fields name; where id={id}')
+        'games', f'fields name, slug; where id={id};')
 
     results = json.loads(byte_array)
+    name = results[0].get('name')
+    slug = results[0].get('slug')
+
+    with Session() as dbsession:
+
+        video_game = dbsession.query(Game).filter_by(name=name).first()
+
+        if not video_game:
+
+            video_game = Game(name=name,
+                              url=f'https://www.igdb.com/games/{slug}')
+
+            dbsession.add(video_game)
+            dbsession.commit()
+
+        wishlist_item = Wishlist(user_id=session.get(
+            'logged_in'), video_game_id=video_game.video_game_id)
+
+        dbsession.add(wishlist_item)
+        dbsession.commit()
+
+    return redirect('/')
+
+
+@app.route('/library/port/<int:id>')
+def add_port_library(id):
+
+    byte_array = wrapper.api_request(
+        'games', f'fields name, slug; where id={id};')
+
+    results = json.loads(byte_array)
+    name = results[0].get('name')
+    slug = results[0].get('slug')
+
+    with Session() as dbsession:
+
+        video_game = dbsession.query(Game).filter_by(name=name).first()
+
+        if not video_game:
+
+            video_game = Game(name=name,
+                              url=f'https://www.igdb.com/games/{slug}')
+
+            dbsession.add(video_game)
+            dbsession.commit()
+
+        library_item = Library(user_id=session.get(
+            'logged_in'), video_game_id=video_game.video_game_id, played=False)
+
+        dbsession.add(library_item)
+        dbsession.commit()
+
+    return redirect('/')
 
 
 @app.route('/wishlist/show')
