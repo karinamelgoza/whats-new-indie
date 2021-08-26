@@ -3,12 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from model import db, User, Game, Wishlist, Library
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime, timezone
 
 from igdb.wrapper import IGDBWrapper
 
 import json
 import config
 import requests
+import calendar
 
 engine = create_engine(
     f'postgresql://{config.psql_username}:{config.psql_password}@{config.psql_host}/{config.psql_db}')
@@ -61,13 +63,27 @@ def register():
                 flash('Incorrect password')
                 return redirect('/')
 
+    date = datetime(datetime.today().year, datetime.today().month, 1).date()
+    # formated_date = date.strftime('%Y-%m-%d')
+    last_day = calendar.monthrange(
+        datetime.today().year, datetime.today().month)[1]
+    date_last = datetime(datetime.today().year,
+                         datetime.today().month, last_day).date()
+    # formated_last = date_last.strftime('%Y-%m-%d')
+    utc_timestamp = int(datetime(datetime.today().year, datetime.today(
+    ).month, 1).replace(tzinfo=timezone.utc).timestamp())
+    utc_timestamp_last = int(datetime(datetime.today().year, datetime.today(
+    ).month, last_day).replace(tzinfo=timezone.utc).timestamp())
+    current_month = date.strftime('%B')
+    current_year = date.strftime('%Y')
+
     response = requests.get(
-        f"https://api.rawg.io/api/games?dates=2021-08-01,2021-08-31&key={config.key}&platforms=18,1,7,187,186,3,21&genres=51&page_size=50&page=1&ordering=released")
+        f"https://api.rawg.io/api/games?dates={date},{date_last}&key={config.key}&platforms=18,1,7,187,186,3,21&genres=51&page_size=50&page=1&ordering=released")
 
     results_rawg = response.json()
 
     byte_array = wrapper.api_request(
-        'games', 'fields name, cover.url, videos.video_id, release_dates.human, genres.name, platforms.name; where first_release_date < 1627776000 &release_dates.date > 1627776000 & release_dates.date < 1630454400 & genres = (32) & platforms= (130); limit 60;')
+        'games', f'fields name, cover.url, videos.video_id, release_dates.human, genres.name, platforms.name; where first_release_date < {utc_timestamp} &release_dates.date >= {utc_timestamp} & release_dates.date <= {utc_timestamp_last} & genres = (32) & platforms= (130); limit 60;')
 
     results = json.loads(byte_array)
 
@@ -89,7 +105,7 @@ def register():
         for i in library:
             library_games.append(i.game.name)
 
-    return render_template('homepage.html', results=results, results_rawg=results_rawg['results'], wishlist=wishlist_games, library=library_games)
+    return render_template('homepage.html', results=results, results_rawg=results_rawg['results'], wishlist=wishlist_games, library=library_games, current_month=current_month, current_year=current_year)
 
 
 @app.route('/logout')
