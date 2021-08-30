@@ -82,16 +82,18 @@
                                 <input type="image" class="btn btn-sm btn-outline-secondary disabled"
                                     src='/static/images/heart-fill.svg' alt="heart-fill" />
                                 {% else %}
-                                <input type="image" class="btn btn-sm btn-outline-secondary"
+                                <input type="image" class="btn btn-sm btn-outline-secondary" title="Add to Wishlist"
                                     src='/static/images/heart.svg' alt="heart"
                                     onclick="location.href='/wishlist/{{ i.id }}'" />
                                 {% endif %}
                                 {% if i.name in library %}
                                 <img type="image" class="btn btn-sm btn-outline-secondary disabled"
                                     src='/static/images/check2.svg' alt="check" />
-                                <small class="text-muted">In library</small>
+                                <span class=" mx-1">
+                                    <small class="text-muted">In library</small>
+                                </span>
                                 {% else %}
-                                <input type="image" class="btn btn-sm btn-outline-secondary"
+                                <input type="image" class="btn btn-sm btn-outline-secondary" title="Add to Library"
                                     src='/static/images/plus.svg' alt="plus"
                                     onclick="location.href='/library/{{ i.id }}'" />
                                 {% endif %}

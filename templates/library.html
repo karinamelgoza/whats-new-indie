@@ -16,17 +16,18 @@
                         <li class="me-auto">
                             {% if game.played == False %}
                             <input type="image" width="32" height="32" src='/static/images/controller.svg'
-                                alt="controller"
+                                alt="controller" title="Mark as Played"
                                 onclick="location.href='/library/played/{{ game.user_id }},{{ game.video_game_id }}'" />
                         </li>
                         <li class="d-flex align-items-center me-3">
                             {% else %}
                             <a href="/library/played/remove/{{ game.user_id }},{{ game.video_game_id }}"
-                                class="mb-0 text-decoration-none text-white">Played</a>
+                                class="mb-0 text-decoration-none text-white" title="Remove Played Status">Played</a>
                             {% endif %}
                         </li>
                         <li class=" d-flex align-items-center">
                             <input type="image" width="28" height="28" src='/static/images/trash_white.svg' alt="trash"
+                                title="Remove from Library"
                                 onclick="location.href='/library/remove/{{ game.user_id }},{{ game.video_game_id }}'" />
                         </li>
                     </ul>
