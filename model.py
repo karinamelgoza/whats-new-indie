@@ -56,10 +56,3 @@ class Library(db.Model):
     played = db.Column(db.Boolean, nullable=True)
 
     game = db.relationship('Game', backref=db.backref('library', order_by=id))
-
-
-# def connect_db(app):
-#     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://owcwrsvbjlrnri:6dfd1b7bbb6ca7a12448a27b00c9bbd1f6027a635773b9a89acbb6412c5b85a4@ec2-35-153-114-74.compute-1.amazonaws.com:5432/dfnb0bbojq31d0'
-#     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#     db.app = app
-#     db.init_app(app)
