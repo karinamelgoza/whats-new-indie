@@ -83,7 +83,7 @@ def register():
     results_rawg = response.json()
 
     byte_array = wrapper.api_request(
-        'games', f'fields name, cover.url, videos.video_id, release_dates.human, genres.name, platforms.name; where first_release_date < {utc_timestamp} &release_dates.date >= {utc_timestamp} & release_dates.date <= {utc_timestamp_last} & genres = (32) & platforms= (130); limit 60;')
+        'games', f'fields name, summary, cover.url, videos.video_id, release_dates.human, genres.name, platforms.name; where first_release_date < {utc_timestamp} &release_dates.date >= {utc_timestamp} & release_dates.date <= {utc_timestamp_last} & genres = (32) & platforms= (130); limit 60;')
 
     results = json.loads(byte_array)
 
