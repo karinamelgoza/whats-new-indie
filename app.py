@@ -64,12 +64,10 @@ def register():
                 return redirect('/')
 
     date = datetime(datetime.today().year, datetime.today().month, 1).date()
-    # formated_date = date.strftime('%Y-%m-%d')
     last_day = calendar.monthrange(
         datetime.today().year, datetime.today().month)[1]
     date_last = datetime(datetime.today().year,
                          datetime.today().month, last_day).date()
-    # formated_last = date_last.strftime('%Y-%m-%d')
     utc_timestamp = int(datetime(datetime.today().year, datetime.today(
     ).month, 1).replace(tzinfo=timezone.utc).timestamp())
     utc_timestamp_last = int(datetime(datetime.today().year, datetime.today(
@@ -83,7 +81,7 @@ def register():
     results_rawg = response.json()
 
     byte_array = wrapper.api_request(
-        'games', f'fields name, cover.url, videos.video_id, release_dates.human, genres.name, platforms.name; where first_release_date < {utc_timestamp} &release_dates.date >= {utc_timestamp} & release_dates.date <= {utc_timestamp_last} & genres = (32) & platforms= (130); limit 60;')
+        'games', f'fields name, summary, cover.url, videos.video_id, release_dates.human, genres.name, platforms.name; where first_release_date < {utc_timestamp} &release_dates.date >= {utc_timestamp} & release_dates.date <= {utc_timestamp_last} & genres = (32) & platforms= (130); limit 60;')
 
     results = json.loads(byte_array)
 

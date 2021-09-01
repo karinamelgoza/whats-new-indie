@@ -60,7 +60,6 @@
                         </div>
                     </div>
                     <div class="card-body">
-
                         <h4 class="card-text">{{ i.name }}</h4>
                         <div class="py-1">
                             Genres:
@@ -131,7 +130,15 @@
                     {% endif %}
 
                     <div class="card-body">
-                        <h4 class="card-text">{{ i.name }}</h4>
+                        <a href="#summary{{i.id}}" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                            aria-controls="collapseExample" class="text-decoration-none text-black">
+                            <h4 class="card-text py-1">{{ i.name }}</h4>
+                        </a>
+                        <div class="collapse py-1" id="summary{{i.id}}">
+                            <div class="card card-body">
+                                {{ i.summary }}
+                            </div>
+                        </div>
                         <div class="py-1">
                             Genres:
                             {% for genre in i.genres %}
