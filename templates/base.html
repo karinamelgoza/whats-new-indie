@@ -108,7 +108,7 @@
 
         {% with messages = get_flashed_messages() %}
         {% for message in messages %}
-        <div class="alert alert-primary alert-dismissible">{{ message }}
+        <div class="alert alert-primary alert-dismissible w-25 position-absolute end-0 my-1 mx-1">{{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}
