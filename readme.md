@@ -10,7 +10,18 @@ With all the hype around the newest AAA video games, it can be difficult to find
 * PostgreSQL
 * Bootstrap
 * HTML/CSS
-* APIs
+* APIs (RAWG, IGDB)
 
 ## Features
-
+Landing Page:
+ ![screenshot1](static/images/landing.png)
+Sign up/Login Modals:
+ ![screenshot1](static/images/signup.png)
+ ![screenshot1](static/images/login.png)
+Indie Video Game Cards:
+ ![screenshot1](static/images/new-releases.png)
+ ![screenshot1](static/images/new-ports.png)
+Wishlist:
+ ![screenshot1](static/images/wishlist.png)
+Library:
+ ![screenshot1](static/images/library.png)
