@@ -324,5 +324,5 @@ def move_game_library(id, user_id, video_game_id):
     return redirect('/wishlist/show')
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
