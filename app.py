@@ -12,7 +12,8 @@ import os
 import requests
 import calendar
 
-engine = create_engine(os.environ.get('DATABASE_URL'))
+engine = create_engine(
+    f"postgresql://{os.environ.get('psql_username')}:{os.environ.get('psql_password')}@{os.environ.get('psql_host')}/{os.environ.get('psql_db')}")
 
 Session = sessionmaker(engine)
 
