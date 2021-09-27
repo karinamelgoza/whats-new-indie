@@ -8,28 +8,27 @@ from datetime import datetime, timezone
 from igdb.wrapper import IGDBWrapper
 
 import json
-import config
+import os
 import requests
 import calendar
 
-engine = create_engine(
-    f'postgresql://{config.psql_username}:{config.psql_password}@{config.psql_host}/{config.psql_db}')
+engine = create_engine(os.environ.get('DATABASE_URL'))
 
 Session = sessionmaker(engine)
 
 db = SQLAlchemy()
 app = Flask(__name__)
 
-app.secret_key = "secret-key"
+app.secret_key = os.environ.get('secret_key')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{config.psql_username}:{config.psql_password}@{config.psql_host}/{config.psql_db}'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.app = app
 db.init_app(app)
 
-wrapper = IGDBWrapper(config.client_id,
-                      config.access_token)
+wrapper = IGDBWrapper(os.environ.get('client_id'),
+                      os.environ.get('access_token'))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -76,7 +75,7 @@ def register():
     current_year = date.strftime('%Y')
 
     response = requests.get(
-        f"https://api.rawg.io/api/games?dates={date},{date_last}&key={config.key}&platforms=18,1,7,187,186,3,21&genres=51&page_size=50&page=1&ordering=released")
+        f"https://api.rawg.io/api/games?dates={date},{date_last}&key={os.environ.get('key')}&platforms=18,1,7,187,186,3,21&genres=51&page_size=50&page=1&ordering=released")
 
     results_rawg = response.json()
 
@@ -119,7 +118,7 @@ def add_wishlist_item(id):
     with Session() as dbsession:
 
         response = requests.get(
-            f"https://api.rawg.io/api/games/{id}?key={config.key}")
+            f"https://api.rawg.io/api/games/{id}?key={os.environ.get('key')}")
         results = response.json()
         name = results.get('name')
         cover_pic = results.get('background_image')
@@ -147,7 +146,7 @@ def add_wishlist_item(id):
 def add_library_item(id):
 
     response = requests.get(
-        f"https://api.rawg.io/api/games/{id}?key={config.key}")
+        f"https://api.rawg.io/api/games/{id}?key={os.environ.get('key')}")
     results = response.json()
     name = results.get('name')
     cover_pic = results.get('background_image')
