@@ -21,7 +21,7 @@ app = Flask(__name__)
 
 app.secret_key = f"{os.environ.get('secret_key')}"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.environ.get('psql_username')}:{os.environ.get('psql_password')}@{os.environ.get('psql_host')}/{os.environ.get('psql_db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.app = app
