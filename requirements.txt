@@ -8,6 +8,7 @@ filelock==3.0.12
 Flask==2.0.1
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.1
+gunicorn==20.1.0
 idna==3.2
 igdb-api-v4==0.0.3
 itsdangerous==2.0.1
