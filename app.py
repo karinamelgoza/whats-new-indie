@@ -38,8 +38,8 @@ def register():
     if request.method == "POST":
 
         if 'register_username' in request.form:
-            user = User(first_name=request.form['first_name'], last_name=request.form['last_name'],
-                        username=request.form['register_username'], password=request.form['password'])
+            user = User(
+                username=request.form['register_username'], password=request.form['password'])
 
             db.session.add(user)
             db.session.commit()
