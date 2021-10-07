@@ -126,9 +126,6 @@
                     {% if i.videos %}
                     <iframe src="https://www.youtube.com/embed/{{ i.videos[0].video_id }}" controls
                         height="255"></iframe>
-
-                    {% else %}
-                    <img src={{ i.cover.url }} alt="" height="255" width="100%">
                     {% endif %}
 
                     <div class="card-body">
